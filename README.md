@@ -3,7 +3,7 @@
   <h1>Visionary</h1>
   <p>Image &amp; SVG tools for web developers — fast, offline, native macOS.</p>
   <img src="https://img.shields.io/badge/macOS-13%2B-black?style=flat-square&logo=apple&logoColor=white" />
-  <img src="https://img.shields.io/badge/version-0.1.0-6b5ce7?style=flat-square" />
+  <img src="https://img.shields.io/badge/version-0.2.0-6b5ce7?style=flat-square" />
   <img src="https://img.shields.io/badge/built_with-Tauri_2-24C8D8?style=flat-square" />
   <br /><br />
   <img src="docs/app-svg.png" width="680" alt="Visionary — SVG tab" />
