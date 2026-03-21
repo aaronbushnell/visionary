@@ -44,7 +44,7 @@ Drop in an SVG and Visionary runs it through [SVGO](https://github.com/svg/svgo)
 **Prerequisites:** [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 18+
 
 ```bash
-git clone https://github.com/yourusername/visionary.git
+git clone https://github.com/aaronbushnell/visionary.git
 cd visionary
 npm install
 npm run dev        # launch in development mode with HMR

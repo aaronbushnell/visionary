@@ -8,7 +8,8 @@
     "build": "tauri build",
     "build:frontend": "vite build",
     "preview": "vite preview",
-    "vite:dev": "vite"
+    "vite:dev": "vite",
+    "release": "node scripts/release.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
