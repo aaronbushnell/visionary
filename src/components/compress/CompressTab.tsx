@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { readFile } from "@tauri-apps/plugin-fs";
 import { DropZone } from "../DropZone";
 import { FileList } from "./FileList";
 import { Toggle } from "../Toggle";
@@ -24,6 +25,35 @@ export function CompressTab() {
   const [resizeEnabled, setResizeEnabled] = useState(false);
   const [maxPx, setMaxPx] = useState(1920);
   const [toast, setToast] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const prevUrlRef = useRef<string | null>(null);
+
+  const selectedFile = files.find((f) => f.id === selectedId) ?? null;
+
+  useEffect(() => {
+    if (prevUrlRef.current) {
+      URL.revokeObjectURL(prevUrlRef.current);
+      prevUrlRef.current = null;
+    }
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
+    }
+    let alive = true;
+    readFile(selectedFile.path).then((bytes) => {
+      if (!alive) return;
+      const ext = selectedFile.path.split(".").pop()?.toLowerCase();
+      const mime = ext === "png" ? "image/png" : "image/jpeg";
+      const blob = new Blob([bytes], { type: mime });
+      const url = URL.createObjectURL(blob);
+      prevUrlRef.current = url;
+      setPreviewUrl(url);
+    }).catch(() => {
+      if (alive) setPreviewUrl(null);
+    });
+    return () => { alive = false; };
+  }, [selectedFile?.path]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -44,6 +74,7 @@ export function CompressTab() {
       })
     );
     setFiles((prev) => [...prev, ...newFiles]);
+    setSelectedId((prev) => prev ?? newFiles[0]?.id ?? null);
   }, []);
 
   const handleConvertAll = async () => {
@@ -111,7 +142,7 @@ export function CompressTab() {
     showToast("All done");
   };
 
-  const handleClear = () => setFiles([]);
+  const handleClear = () => { setFiles([]); setSelectedId(null); };
 
   return (
     <div className="flex-1 flex flex-col p-4 gap-3 min-h-0">
@@ -124,7 +155,32 @@ export function CompressTab() {
       >
         {files.length > 0 ? (
           <>
-            <FileList files={files} />
+            <div className="flex-1 flex gap-3 min-h-0">
+              {/* File list */}
+              <div className="w-64 flex flex-col min-h-0">
+                <FileList files={files} selectedId={selectedId} onSelect={setSelectedId} />
+              </div>
+
+              {/* Preview */}
+              <div
+                className="flex-1 rounded-xl border border-zinc-800/60 overflow-hidden flex items-center justify-center"
+                style={{
+                  background: "#0e0e12",
+                  backgroundImage: "radial-gradient(circle, #1c1c26 1px, transparent 1px)",
+                  backgroundSize: "18px 18px",
+                }}
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={selectedFile?.name}
+                    className="max-w-full max-h-full object-contain p-6"
+                  />
+                ) : (
+                  <span className="text-[12px] text-zinc-700">Select a file to preview</span>
+                )}
+              </div>
+            </div>
 
             {/* Options + actions */}
             <div className="flex items-center gap-3 shrink-0 flex-wrap pt-1 border-t border-zinc-900">

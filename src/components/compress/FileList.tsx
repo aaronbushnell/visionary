@@ -72,9 +72,11 @@ function StatusIcon({ status }: { status: AnyFile["status"] }) {
 
 interface FileListProps {
   files: AnyFile[];
+  selectedId?: string;
+  onSelect?: (id: string) => void;
 }
 
-export function FileList({ files }: FileListProps) {
+export function FileList({ files, selectedId, onSelect }: FileListProps) {
   if (files.length === 0) return null;
 
   return (
@@ -89,15 +91,19 @@ export function FileList({ files }: FileListProps) {
 
         const isProcessing = file.status === "processing";
         const isError = file.status === "error";
+        const isSelected = file.id === selectedId;
 
         return (
           <div
             key={file.id}
-            className={`flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] transition-colors animate-entry ${
+            onClick={() => onSelect?.(file.id)}
+            className={`flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] cursor-pointer animate-entry ${
               isProcessing
                 ? "bg-[var(--accent-dim)] ring-1 ring-[var(--accent-border)] ring-inset"
                 : isError
-                ? "bg-red-500/5"
+                ? "bg-red-500/5 hover:bg-red-500/10"
+                : isSelected
+                ? "bg-zinc-800"
                 : "bg-zinc-900/50 hover:bg-zinc-900"
             }`}
             style={{ animationDelay: `${i * 20}ms` }}
