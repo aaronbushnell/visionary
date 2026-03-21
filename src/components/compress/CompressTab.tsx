@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { readFile } from "@tauri-apps/plugin-fs";
+import { isPermissionGranted, requestPermission, sendNotification } from "@tauri-apps/plugin-notification";
 import { DropZone } from "../DropZone";
 import { FileList } from "./FileList";
 import { Toggle } from "../Toggle";
@@ -140,6 +141,18 @@ export function CompressTab() {
     setRunning(false);
     setProgress(null);
     showToast("All done");
+
+    let granted = await isPermissionGranted();
+    if (!granted) {
+      granted = (await requestPermission()) === "granted";
+    }
+    if (granted) {
+      const doneCount = pending.length;
+      sendNotification({
+        title: "Visionary",
+        body: `${doneCount} image${doneCount === 1 ? "" : "s"} compressed successfully`,
+      });
+    }
   };
 
   const handleClear = () => { setFiles([]); setSelectedId(null); };

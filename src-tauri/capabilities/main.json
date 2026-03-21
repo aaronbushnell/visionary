@@ -19,6 +19,7 @@
     "fs:allow-write-text-file",
     "fs:allow-read-dir",
     "fs:allow-exists",
-    "fs:scope-home-recursive"
+    "fs:scope-home-recursive",
+    "notification:default"
   ]
 }

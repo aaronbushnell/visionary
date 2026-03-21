@@ -9,6 +9,7 @@ use commands::utils::get_file_size;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_notification::init())
         .invoke_handler(tauri::generate_handler![
             jpg_to_webp,
             resize_to_webp,
