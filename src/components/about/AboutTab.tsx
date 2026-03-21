@@ -11,6 +11,7 @@ const RUST_LIBS = [
   { name: "Tauri", version: "2.10.3" },
   { name: "image", version: "0.25.10" },
   { name: "webp", version: "0.3.1" },
+  { name: "ravif", version: "0.13.0" },
   { name: "serde", version: "1.0.228" },
 ];
 

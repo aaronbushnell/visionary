@@ -167,7 +167,7 @@ export function CompressTab() {
         onDrop={handleDrop}
         className="flex-1 flex flex-col gap-3 min-h-0"
         label="Drop JPG or PNG files"
-        sublabel={`Converts to ${outputFormat.toUpperCase()}`}
+        sublabel="Converts to WebP or AVIF"
       >
         {files.length > 0 ? (
           <>
