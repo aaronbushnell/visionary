@@ -23,6 +23,7 @@ export function CompressTab() {
   const [files, setFiles] = useState<CompressFile[]>([]);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const [outputFormat, setOutputFormat] = useState<"webp" | "avif">("webp");
   const [resizeEnabled, setResizeEnabled] = useState(false);
   const [maxPx, setMaxPx] = useState(1920);
   const [toast, setToast] = useState<string | null>(null);
@@ -97,7 +98,8 @@ export function CompressTab() {
         );
         try {
           if (resizeEnabled) {
-            const result = await invoke<ResizeResult>("resize_to_webp", {
+            const cmd = outputFormat === "avif" ? "resize_to_avif" : "resize_to_webp";
+            const result = await invoke<ResizeResult>(cmd, {
               input: { path: file.path, max_px: maxPx },
             });
             setFiles((prev) =>
@@ -108,7 +110,8 @@ export function CompressTab() {
               )
             );
           } else {
-            const result = await invoke<CompressResult>("jpg_to_webp", {
+            const cmd = outputFormat === "avif" ? "jpg_to_avif" : "jpg_to_webp";
+            const result = await invoke<CompressResult>(cmd, {
               path: file.path,
             });
             setFiles((prev) =>
@@ -164,7 +167,7 @@ export function CompressTab() {
         onDrop={handleDrop}
         className="flex-1 flex flex-col gap-3 min-h-0"
         label="Drop JPG or PNG files"
-        sublabel="Converts to WebP"
+        sublabel={`Converts to ${outputFormat.toUpperCase()}`}
       >
         {files.length > 0 ? (
           <>
@@ -197,6 +200,24 @@ export function CompressTab() {
 
             {/* Options + actions */}
             <div className="flex items-center gap-3 shrink-0 flex-wrap pt-1 border-t border-zinc-900">
+              {/* Format toggle */}
+              <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-0.5 gap-0.5">
+                {(["webp", "avif"] as const).map((fmt) => (
+                  <button
+                    key={fmt}
+                    onClick={() => !running && setOutputFormat(fmt)}
+                    disabled={running}
+                    className={`px-2.5 py-1 rounded-md text-[12px] font-medium transition-all disabled:opacity-40 ${
+                      outputFormat === fmt
+                        ? "bg-[var(--accent)] text-white"
+                        : "text-zinc-500 hover:text-zinc-300"
+                    }`}
+                  >
+                    {fmt.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+
               {/* Resize option */}
               <label className="flex items-center gap-2 cursor-pointer">
                 <Toggle

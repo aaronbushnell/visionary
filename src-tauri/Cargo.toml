@@ -19,7 +19,7 @@ tauri-plugin-notification = "2"
 serde       = { version = "1", features = ["derive"] }
 serde_json  = "1"
 thiserror   = "2"
-image       = { version = "0.25", default-features = false, features = ["jpeg", "png"] }
+image       = { version = "0.25", default-features = false, features = ["jpeg", "png", "avif"] }
 webp        = "0.3"
 
 [profile.release]

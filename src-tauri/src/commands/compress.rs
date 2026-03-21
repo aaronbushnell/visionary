@@ -1,7 +1,8 @@
 use crate::error::AppError;
-use image::ImageReader;
+use image::{ExtendedColorType, ImageEncoder, ImageReader};
 use serde::Serialize;
 use std::fs;
+use std::io::Cursor;
 use std::path::PathBuf;
 
 #[derive(Serialize)]
@@ -37,6 +38,40 @@ pub async fn jpg_to_webp(path: String) -> Result<CompressResult, AppError> {
 
         let output_path = input_path.with_extension("webp");
         fs::write(&output_path, webp_data.as_ref() as &[u8])?;
+
+        let output_bytes = fs::metadata(&output_path)?.len();
+
+        Ok(CompressResult {
+            input_path: path,
+            output_path: output_path.to_string_lossy().to_string(),
+            input_bytes,
+            output_bytes,
+        })
+    })
+    .await
+    .map_err(|e| AppError::Other(e.to_string()))?
+}
+
+#[tauri::command]
+pub async fn jpg_to_avif(path: String) -> Result<CompressResult, AppError> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let input_path = PathBuf::from(&path);
+        let input_bytes = fs::metadata(&input_path)?.len();
+
+        let img = ImageReader::open(&input_path)?.decode()?.to_rgb8();
+        let (width, height) = img.dimensions();
+
+        let mut output: Vec<u8> = Vec::new();
+        {
+            let cursor = Cursor::new(&mut output);
+            let encoder = image::codecs::avif::AvifEncoder::new_with_speed_quality(cursor, 6, 75);
+            encoder
+                .write_image(img.as_raw(), width, height, ExtendedColorType::Rgb8)
+                .map_err(|e| AppError::Other(e.to_string()))?;
+        }
+
+        let output_path = input_path.with_extension("avif");
+        fs::write(&output_path, &output)?;
 
         let output_bytes = fs::metadata(&output_path)?.len();
 
