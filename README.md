@@ -6,6 +6,7 @@
   <img src="https://img.shields.io/badge/version-0.2.0-6b5ce7?style=flat-square" />
   <img src="https://img.shields.io/badge/built_with-Tauri_2-24C8D8?style=flat-square" />
   <br /><br />
+  <img src="docs/app-compress.png" width="680" alt="Visionary — Compress tab" />
   <img src="docs/app-svg.png" width="680" alt="Visionary — SVG tab" />
 </div>
 
@@ -31,11 +32,13 @@ Drop in an SVG and Visionary runs it through [SVGO](https://github.com/svg/svgo)
 
 > **First launch — Gatekeeper warning**
 >
-> Because Visionary is not notarized with an Apple Developer certificate, macOS will block it on first open. To allow it:
+> Because Visionary is not notarized with an Apple Developer certificate, macOS may show a "damaged" error on first open. To fix it, run this once in Terminal:
 >
-> Right-click (or Control-click) **Visionary.app** → **Open** → click **Open** in the dialog.
+> ```bash
+> xattr -cr /Applications/Visionary.app
+> ```
 >
-> You only need to do this once. After that it opens normally.
+> Then double-click to open normally.
 
 ---
 

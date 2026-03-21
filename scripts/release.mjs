@@ -34,7 +34,7 @@ if (!existsSync(APP_PATH)) {
   console.error(`\nBuild succeeded but .app not found at:\n  ${APP_PATH}`);
   process.exit(1);
 }
-execSync(`zip -r --symlinks "${ZIP_PATH}" Visionary.app`, {
+execSync(`ditto -c -k --keepParent Visionary.app "${ZIP_PATH}"`, {
   stdio: "inherit",
   cwd: join(root, "src-tauri/target/release/bundle/macos"),
 });
