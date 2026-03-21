@@ -46,7 +46,7 @@ export function AboutTab() {
         Visionary
       </h1>
       <p className="mt-1 text-[13px] text-zinc-500 tabular-nums">
-        Version 0.2.0
+        Version 0.2.1
       </p>
       <p className="mt-1 text-[12px] text-zinc-700">
         Image &amp; SVG tools for web developers
