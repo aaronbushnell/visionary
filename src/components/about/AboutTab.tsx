@@ -16,63 +16,14 @@ const RUST_LIBS = [
 
 function AppLogo() {
   return (
-    <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
-      <defs>
-        <radialGradient id="lBg" cx="36" cy="28" r="50" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stopColor="#161228"/>
-          <stop offset="100%" stopColor="#06040A"/>
-        </radialGradient>
-        <radialGradient id="lBloom" cx="36" cy="36" r="32" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stopColor="#7B6EF5" stopOpacity="0.20"/>
-          <stop offset="100%" stopColor="#7B6EF5" stopOpacity="0"/>
-        </radialGradient>
-        <radialGradient id="lIris" cx="31" cy="30" r="24" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stopColor="#E2DAFF"/>
-          <stop offset="20%" stopColor="#9180F7"/>
-          <stop offset="58%" stopColor="#5846CC"/>
-          <stop offset="100%" stopColor="#110A3C"/>
-        </radialGradient>
-        <radialGradient id="lPupil" cx="35" cy="35" r="9" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stopColor="#1E1445"/>
-          <stop offset="100%" stopColor="#030210"/>
-        </radialGradient>
-        <linearGradient id="lSheen" x1="18" y1="15" x2="44" y2="40" gradientUnits="userSpaceOnUse">
-          <stop offset="0%"  stopColor="white" stopOpacity="0.65"/>
-          <stop offset="35%" stopColor="white" stopOpacity="0.16"/>
-          <stop offset="100%" stopColor="white" stopOpacity="0"/>
-        </linearGradient>
-        <clipPath id="lClip">
-          <circle cx="36" cy="36" r="21.5"/>
-        </clipPath>
-      </defs>
-
-      {/* Squircle background */}
-      <rect width="72" height="72" rx="18" fill="url(#lBg)"/>
-      {/* Bloom */}
-      <rect width="72" height="72" rx="18" fill="url(#lBloom)"/>
-
-      {/* Shadow ellipse */}
-      <ellipse cx="37" cy="39" rx="21" ry="15" fill="#2E1C90" fillOpacity="0.40"/>
-
-      {/* Iris */}
-      <circle cx="36" cy="36" r="21.5" fill="url(#lIris)"/>
-
-      {/* Limbal ring */}
-      <circle cx="36" cy="36" r="10" fill="none" stroke="#080420" strokeWidth="1" strokeOpacity="0.80" clipPath="url(#lClip)"/>
-      {/* Pupil */}
-      <circle cx="36" cy="36" r="9" fill="url(#lPupil)" clipPath="url(#lClip)"/>
-
-      {/* Glass sheen sweep */}
-      <ellipse cx="28" cy="26" rx="17" ry="11" fill="url(#lSheen)" transform="rotate(-22 28 26)" clipPath="url(#lClip)"/>
-      {/* Soft specular */}
-      <ellipse cx="26" cy="24" rx="7" ry="4.5" fill="white" opacity="0.26" transform="rotate(-15 26 24)" clipPath="url(#lClip)"/>
-      {/* Pin-point specular */}
-      <circle cx="25" cy="23" r="3" fill="white" opacity="0.75" clipPath="url(#lClip)"/>
-      <circle cx="25" cy="23" r="1" fill="white" opacity="1.0"  clipPath="url(#lClip)"/>
-
-      {/* Edge ring */}
-      <circle cx="36" cy="36" r="21.5" fill="none" stroke="white" strokeWidth="0.75" strokeOpacity="0.12"/>
-    </svg>
+    <img
+      src="/icon.png"
+      width={72}
+      height={72}
+      alt="Visionary"
+      className="rounded-[18px]"
+      draggable={false}
+    />
   );
 }
 
