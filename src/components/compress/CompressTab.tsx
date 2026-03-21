@@ -118,90 +118,74 @@ export function CompressTab() {
       <DropZone
         acceptedExtensions={["jpg", "jpeg", "png"]}
         onDrop={handleDrop}
-        className="shrink-0 h-24"
+        className="flex-1 flex flex-col gap-3 min-h-0"
         label="Drop JPG or PNG files"
         sublabel="Converts to WebP"
-      />
+      >
+        {files.length > 0 ? (
+          <>
+            <FileList files={files} />
 
-      {/* Options row */}
-      <div className="flex items-center gap-2.5 shrink-0">
-        <Toggle
-          checked={resizeEnabled}
-          onChange={setResizeEnabled}
-          disabled={running}
-        />
-        <span
-          className={`text-[13px] transition-colors ${
-            resizeEnabled ? "text-zinc-300" : "text-zinc-600"
-          }`}
-        >
-          Max size
-        </span>
-        <input
-          type="number"
-          value={maxPx}
-          min={1}
-          max={16000}
-          disabled={!resizeEnabled || running}
-          onChange={(e) => {
-            const n = parseInt(e.target.value, 10);
-            if (!isNaN(n) && n > 0) setMaxPx(n);
-          }}
-          className="w-16 px-2 py-1 bg-zinc-900 border border-zinc-800 text-zinc-200 text-[13px] rounded-md text-right focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] disabled:opacity-40 transition-all [appearance:textfield] tabular-nums"
-        />
-        <span
-          className={`text-[13px] transition-colors ${
-            resizeEnabled ? "text-zinc-500" : "text-zinc-700"
-          }`}
-        >
-          px
-        </span>
-      </div>
+            {/* Options + actions */}
+            <div className="flex items-center gap-3 shrink-0 flex-wrap pt-1 border-t border-zinc-900">
+              {/* Resize option */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Toggle
+                  checked={resizeEnabled}
+                  onChange={setResizeEnabled}
+                  disabled={running}
+                />
+                <span className={`text-[13px] ${resizeEnabled ? "text-zinc-300" : "text-zinc-500"}`}>
+                  Scale down if larger than
+                </span>
+              </label>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  value={maxPx}
+                  min={1}
+                  max={16000}
+                  disabled={!resizeEnabled || running}
+                  onChange={(e) => {
+                    const n = parseInt(e.target.value, 10);
+                    if (!isNaN(n) && n > 0) setMaxPx(n);
+                  }}
+                  className="w-16 px-2 py-1 bg-zinc-900 border border-zinc-800 text-zinc-200 text-[13px] rounded-md text-right focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] disabled:opacity-40 [appearance:textfield] tabular-nums"
+                />
+                <span className={`text-[13px] ${resizeEnabled ? "text-zinc-500" : "text-zinc-700"}`}>
+                  px
+                </span>
+              </div>
 
-      {files.length > 0 && (
-        <div className="flex-1 flex flex-col gap-3 min-h-0">
-          <FileList files={files} />
+              <div className="flex-1" />
 
-          {/* Action row */}
-          <div className="flex items-center gap-2 shrink-0 pt-1 border-t border-zinc-900">
-            <button
-              onClick={handleConvertAll}
-              disabled={running || files.every((f) => f.status !== "pending")}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 text-white text-[13px] rounded-lg font-medium transition-all"
-            >
-              {running && (
-                <svg
-                  className="animate-spin w-3.5 h-3.5 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
+              {/* Action buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleConvertAll}
+                  disabled={running || files.every((f) => f.status !== "pending")}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 text-white text-[13px] rounded-lg font-medium transition-all"
                 >
-                  <circle
-                    className="opacity-20"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  />
-                  <path
-                    className="opacity-80"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"
-                  />
-                </svg>
-              )}
-              {progress ? `${progress.done} / ${progress.total}` : "Convert All"}
-            </button>
-            <button
-              onClick={handleClear}
-              disabled={running}
-              className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all disabled:opacity-40"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
+                  {running && (
+                    <svg className="animate-spin w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"/>
+                      <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"/>
+                    </svg>
+                  )}
+                  {progress ? `${progress.done} / ${progress.total}` : "Convert All"}
+                </button>
+                <button
+                  onClick={handleClear}
+                  disabled={running}
+                  className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all disabled:opacity-40"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </>
+        ) : undefined}
+      </DropZone>
 
       {toast && (
         <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 text-zinc-300 px-4 py-2 rounded-lg text-[13px] shadow-2xl pointer-events-none animate-toast">
