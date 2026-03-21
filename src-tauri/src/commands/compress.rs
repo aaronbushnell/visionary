@@ -18,7 +18,7 @@ pub async fn jpg_to_webp(path: String) -> Result<CompressResult, AppError> {
         let input_path = PathBuf::from(&path);
         let input_bytes = fs::metadata(&input_path)?.len();
 
-        let img = ImageReader::open(&input_path)?.decode()?.to_rgba8();
+        let img = ImageReader::open(&input_path)?.decode()?.to_rgb8();
         let (width, height) = img.dimensions();
 
         let mut config = webp::WebPConfig::new()
@@ -28,8 +28,9 @@ pub async fn jpg_to_webp(path: String) -> Result<CompressResult, AppError> {
         // to a lossless encoder — there's nothing to preserve losslessly from an already-lossy source.
         config.lossless = 0;
         config.quality = 80.0;
+        config.method = 2;
 
-        let encoder = webp::Encoder::from_rgba(img.as_raw(), width, height);
+        let encoder = webp::Encoder::from_rgb(img.as_raw(), width, height);
         let webp_data = encoder
             .encode_advanced(&config)
             .map_err(|_| AppError::WebP("WebP encoding failed".to_string()))?;

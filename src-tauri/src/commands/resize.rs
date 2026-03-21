@@ -43,14 +43,15 @@ pub async fn resize_to_webp(input: ResizeInput) -> Result<ResizeResult, AppError
         };
 
         let resized = img.resize_exact(out_width, out_height, FilterType::Lanczos3);
-        let rgba = resized.to_rgba8();
+        let rgb = resized.to_rgb8();
 
         let mut config = webp::WebPConfig::new()
             .map_err(|_| AppError::WebP("Failed to create WebP config".to_string()))?;
         config.lossless = 0;
         config.quality = 80.0;
+        config.method = 2;
 
-        let encoder = webp::Encoder::from_rgba(rgba.as_raw(), out_width, out_height);
+        let encoder = webp::Encoder::from_rgb(rgb.as_raw(), out_width, out_height);
         let webp_data = encoder
             .encode_advanced(&config)
             .map_err(|_| AppError::WebP("WebP encoding failed".to_string()))?;
