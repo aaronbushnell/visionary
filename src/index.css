@@ -8,16 +8,71 @@
   padding: 0;
 }
 
+:root {
+  --accent: #7B6EF5;
+  --accent-hover: #8B7FF7;
+  --accent-dim: rgba(123, 110, 245, 0.1);
+  --accent-border: rgba(123, 110, 245, 0.25);
+}
+
 html,
 body,
 #root {
   height: 100%;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent text selection on drag regions */
 [data-tauri-drag-region] {
   user-select: none;
   -webkit-user-select: none;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a35;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38384a;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-entry {
+  animation: fadeSlideIn 0.12s ease-out both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.animate-toast {
+  animation: toastIn 0.15s ease-out both;
 }

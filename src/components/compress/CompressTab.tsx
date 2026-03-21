@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { DropZone } from "../DropZone";
 import { FileList } from "./FileList";
+import { Toggle } from "../Toggle";
 import { CompressFile, CompressResult, ResizeResult } from "../../types";
 
 let idCounter = 0;
@@ -70,12 +71,7 @@ export function CompressTab() {
             setFiles((prev) =>
               prev.map((f) =>
                 f.id === file.id
-                  ? {
-                      ...f,
-                      status: "done",
-                      outputBytes: result.output_bytes,
-                      outputPath: result.output_path,
-                    }
+                  ? { ...f, status: "done", outputBytes: result.output_bytes, outputPath: result.output_path }
                   : f
               )
             );
@@ -86,12 +82,7 @@ export function CompressTab() {
             setFiles((prev) =>
               prev.map((f) =>
                 f.id === file.id
-                  ? {
-                      ...f,
-                      status: "done",
-                      outputBytes: result.output_bytes,
-                      outputPath: result.output_path,
-                    }
+                  ? { ...f, status: "done", outputBytes: result.output_bytes, outputPath: result.output_path }
                   : f
               )
             );
@@ -117,7 +108,7 @@ export function CompressTab() {
 
     setRunning(false);
     setProgress(null);
-    showToast("Done!");
+    showToast("All done");
   };
 
   const handleClear = () => setFiles([]);
@@ -127,23 +118,25 @@ export function CompressTab() {
       <DropZone
         acceptedExtensions={["jpg", "jpeg", "png"]}
         onDrop={handleDrop}
-        className="shrink-0 h-28"
-        label="Drop JPG / PNG files"
+        className="shrink-0 h-24"
+        label="Drop JPG or PNG files"
         sublabel="Converts to WebP"
       />
 
-      {/* Resize toggle */}
-      <div className="flex items-center gap-3 shrink-0">
-        <label className="flex items-center gap-2 cursor-pointer text-sm text-neutral-300">
-          <input
-            type="checkbox"
-            checked={resizeEnabled}
-            onChange={(e) => setResizeEnabled(e.target.checked)}
-            disabled={running}
-            className="accent-blue-500"
-          />
-          Resize to max
-        </label>
+      {/* Options row */}
+      <div className="flex items-center gap-2.5 shrink-0">
+        <Toggle
+          checked={resizeEnabled}
+          onChange={setResizeEnabled}
+          disabled={running}
+        />
+        <span
+          className={`text-[13px] transition-colors ${
+            resizeEnabled ? "text-zinc-300" : "text-zinc-600"
+          }`}
+        >
+          Max size
+        </span>
         <input
           type="number"
           value={maxPx}
@@ -154,9 +147,13 @@ export function CompressTab() {
             const n = parseInt(e.target.value, 10);
             if (!isNaN(n) && n > 0) setMaxPx(n);
           }}
-          className="w-20 px-2 py-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-lg text-right focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-40 transition-opacity"
+          className="w-16 px-2 py-1 bg-zinc-900 border border-zinc-800 text-zinc-200 text-[13px] rounded-md text-right focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] disabled:opacity-40 transition-all [appearance:textfield] tabular-nums"
         />
-        <span className={`text-sm transition-opacity ${resizeEnabled ? "text-neutral-400" : "text-neutral-600"}`}>
+        <span
+          className={`text-[13px] transition-colors ${
+            resizeEnabled ? "text-zinc-500" : "text-zinc-700"
+          }`}
+        >
           px
         </span>
       </div>
@@ -165,24 +162,40 @@ export function CompressTab() {
         <div className="flex-1 flex flex-col gap-3 min-h-0">
           <FileList files={files} />
 
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Action row */}
+          <div className="flex items-center gap-2 shrink-0 pt-1 border-t border-zinc-900">
             <button
               onClick={handleConvertAll}
               disabled={running || files.every((f) => f.status !== "pending")}
-              className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm rounded-lg font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 text-white text-[13px] rounded-lg font-medium transition-all"
             >
               {running && (
-                <svg className="animate-spin w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                <svg
+                  className="animate-spin w-3.5 h-3.5 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-20"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  />
+                  <path
+                    className="opacity-80"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"
+                  />
                 </svg>
               )}
-              {progress ? `${progress.done} / ${progress.total} done…` : "Convert All"}
+              {progress ? `${progress.done} / ${progress.total}` : "Convert All"}
             </button>
             <button
               onClick={handleClear}
               disabled={running}
-              className="px-4 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-neutral-200 text-sm rounded-lg font-medium transition-colors"
+              className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all disabled:opacity-40"
             >
               Clear
             </button>
@@ -191,7 +204,7 @@ export function CompressTab() {
       )}
 
       {toast && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-neutral-700 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 text-zinc-300 px-4 py-2 rounded-lg text-[13px] shadow-2xl pointer-events-none animate-toast">
           {toast}
         </div>
       )}

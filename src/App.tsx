@@ -1,26 +1,44 @@
 import { useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TabBar } from "./components/TabBar";
 import { SvgTab } from "./components/svg/SvgTab";
 import { CompressTab } from "./components/compress/CompressTab";
+import { AboutTab } from "./components/about/AboutTab";
 import { TabId } from "./types";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("compress");
 
+  const handleTitlebarMouseDown = (e: React.MouseEvent) => {
+    if (!(e.target as HTMLElement).closest("button")) {
+      e.preventDefault();
+      getCurrentWindow().startDragging();
+    }
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-neutral-950 text-white select-none overflow-hidden">
-      {/* Title bar drag region — leaves room for traffic lights (~70px) */}
+    <div className="flex flex-col h-screen bg-zinc-950 text-white select-none overflow-hidden">
+      {/* Title bar */}
       <div
-        data-tauri-drag-region
-        className="h-11 shrink-0 flex items-end pb-0 pl-20"
+        className="relative h-[62px] shrink-0 border-b border-zinc-900"
+        onMouseDown={handleTitlebarMouseDown}
       >
-        <TabBar active={activeTab} onChange={setActiveTab} />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="pointer-events-auto">
+            <TabBar active={activeTab} onChange={setActiveTab} />
+          </div>
+        </div>
       </div>
 
-      {/* Tab content */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {activeTab === "svg" && <SvgTab />}
-        {activeTab === "compress" && <CompressTab />}
+      {/* Tab content — always mounted to preserve state and in-flight processing */}
+      <div className={`flex-1 flex flex-col min-h-0 ${activeTab === "compress" ? "" : "hidden"}`}>
+        <CompressTab />
+      </div>
+      <div className={`flex-1 flex flex-col min-h-0 ${activeTab === "svg" ? "" : "hidden"}`}>
+        <SvgTab />
+      </div>
+      <div className={`flex-1 flex flex-col min-h-0 ${activeTab === "about" ? "" : "hidden"}`}>
+        <AboutTab />
       </div>
     </div>
   );

@@ -10,6 +10,24 @@ interface DropZoneProps {
   sublabel?: string;
 }
 
+function UploadIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 15V3m0 0-4 4m4-4 4 4" />
+      <path d="M2 17v1a3 3 0 003 3h14a3 3 0 003-3v-1" />
+    </svg>
+  );
+}
+
 export function DropZone({
   acceptedExtensions,
   onDrop,
@@ -20,8 +38,6 @@ export function DropZone({
 }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
 
-  // Keep refs so the single registered listener always sees the latest values
-  // without needing to re-register (which would cause duplicate listeners).
   const acceptedRef = useRef(acceptedExtensions);
   acceptedRef.current = acceptedExtensions;
   const onDropRef = useRef(onDrop);
@@ -49,7 +65,6 @@ export function DropZone({
         }
       })
       .then((fn) => {
-        // If cleanup already ran before this Promise resolved, unlisten immediately.
         if (cancelled) {
           fn();
         } else {
@@ -61,12 +76,16 @@ export function DropZone({
       cancelled = true;
       unlisten?.();
     };
-  }, []); // register once — refs handle value updates
+  }, []);
 
   if (children) {
     return (
       <div
-        className={`${className} ${isDragging ? "ring-2 ring-blue-500 ring-inset" : ""}`}
+        className={`${className} rounded-xl transition-all duration-150 ${
+          isDragging
+            ? "ring-1 ring-[var(--accent)] ring-inset bg-[var(--accent-dim)]"
+            : ""
+        }`}
       >
         {children}
       </div>
@@ -75,20 +94,28 @@ export function DropZone({
 
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors ${
+      className={`flex flex-col items-center justify-center rounded-xl border border-dashed transition-all duration-150 ${
         isDragging
-          ? "border-blue-400 bg-blue-500/10"
-          : "border-neutral-700 bg-neutral-900/50"
+          ? "border-[var(--accent)] bg-[var(--accent-dim)]"
+          : "border-zinc-800 hover:border-zinc-700 bg-zinc-900/30"
       } ${className}`}
     >
-      <div className="text-3xl mb-2 opacity-50">
-        {isDragging ? "↓" : "↑"}
+      <div
+        className={`mb-2.5 transition-colors duration-150 ${
+          isDragging ? "text-[var(--accent)]" : "text-zinc-600"
+        }`}
+      >
+        <UploadIcon />
       </div>
-      <p className="text-neutral-400 text-sm font-medium">
-        {label ?? "Drop files here"}
+      <p
+        className={`text-[13px] font-medium transition-colors duration-150 ${
+          isDragging ? "text-zinc-300" : "text-zinc-500"
+        }`}
+      >
+        {isDragging ? "Release to add" : (label ?? "Drop files here")}
       </p>
-      {sublabel && (
-        <p className="text-neutral-600 text-xs mt-1">{sublabel}</p>
+      {sublabel && !isDragging && (
+        <p className="text-zinc-700 text-xs mt-1">{sublabel}</p>
       )}
     </div>
   );

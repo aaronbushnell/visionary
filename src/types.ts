@@ -1,4 +1,4 @@
-export type TabId = "svg" | "compress";
+export type TabId = "svg" | "compress" | "about";
 
 export interface SvgState {
   path: string;

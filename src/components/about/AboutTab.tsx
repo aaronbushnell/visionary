@@ -1,0 +1,93 @@
+const FRONTEND_LIBS = [
+  { name: "React", version: "18.3.1" },
+  { name: "Tauri", version: "2.10.1" },
+  { name: "SVGO", version: "3.3.3" },
+  { name: "Tailwind CSS", version: "3.4.19" },
+  { name: "TypeScript", version: "5.9.3" },
+  { name: "Vite", version: "5.4.21" },
+];
+
+const RUST_LIBS = [
+  { name: "Tauri", version: "2.10.3" },
+  { name: "image", version: "0.25.10" },
+  { name: "webp", version: "0.3.1" },
+  { name: "serde", version: "1.0.228" },
+];
+
+function AppLogo() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="16" fill="#7B6EF5" />
+      {/* Eye outline */}
+      <path
+        d="M11 32 C18 21 26 17 32 17 C38 17 46 21 53 32 C46 43 38 47 32 47 C26 47 18 43 11 32Z"
+        fill="none"
+        stroke="white"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+        opacity="0.85"
+      />
+      {/* Iris */}
+      <circle cx="32" cy="32" r="8" fill="white" opacity="0.95" />
+      {/* Pupil */}
+      <circle cx="32" cy="32" r="4.5" fill="#7B6EF5" />
+      {/* Catchlight */}
+      <circle cx="35" cy="29" r="1.5" fill="white" opacity="0.75" />
+    </svg>
+  );
+}
+
+function LibRow({ name, version }: { name: string; version: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-2 py-[5px] border-b border-zinc-900 last:border-0">
+      <span className="text-[13px] text-zinc-400">{name}</span>
+      <span className="text-[12px] text-zinc-600 tabular-nums">{version}</span>
+    </div>
+  );
+}
+
+export function AboutTab() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center p-8 select-text">
+      {/* Logo + identity */}
+      <AppLogo />
+      <h1 className="mt-4 text-[18px] font-semibold text-zinc-100 tracking-tight">
+        Visionary
+      </h1>
+      <p className="mt-1 text-[13px] text-zinc-500 tabular-nums">
+        Version 0.1.0
+      </p>
+      <p className="mt-1 text-[12px] text-zinc-700">
+        Image &amp; SVG tools for web developers
+      </p>
+
+      {/* Divider */}
+      <div className="w-full max-w-xs mt-8 border-t border-zinc-900" />
+
+      {/* Libraries */}
+      <div className="mt-6 w-full max-w-xs">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600 mb-4">
+          Built with
+        </p>
+        <div className="grid grid-cols-2 gap-x-8">
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-zinc-700 mb-1">
+              Frontend
+            </p>
+            {FRONTEND_LIBS.map((lib) => (
+              <LibRow key={lib.name} {...lib} />
+            ))}
+          </div>
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-zinc-700 mb-1">
+              Rust
+            </p>
+            {RUST_LIBS.map((lib) => (
+              <LibRow key={lib.name} {...lib} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
