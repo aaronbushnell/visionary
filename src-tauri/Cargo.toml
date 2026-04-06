@@ -1,6 +1,6 @@
 [package]
 name = "visionary"
-version = "0.2.3"
+version = "0.2.4"
 description = "Visionary — image & SVG tools for web developers"
 authors = []
 edition = "2021"
