@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { DropZone } from "../DropZone";
 import { Toggle } from "../Toggle";
@@ -51,16 +52,65 @@ function CodeIcon() {
   );
 }
 
+function UploadIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 15V3m0 0-4 4m4-4 4 4" />
+      <path d="M2 17v1a3 3 0 003 3h14a3 3 0 003-3v-1" />
+    </svg>
+  );
+}
+
+function ClipboardIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="1" width="6" height="3" rx="1" />
+      <path d="M10 2h2a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2h2" />
+    </svg>
+  );
+}
+
 export function SvgTab() {
   const [state, setState] = useState<SvgState | null>(null);
   const [useCurrentColor, setUseCurrentColor] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [toast, setToast] = useState<string | null>(null);
-
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2500);
   };
+
+  const handlePasteSvg = useCallback((svgText: string) => {
+    try {
+      const result = runSvgo(svgText, false);
+      setState({
+        path: "",
+        original: svgText,
+        optimized: result.data,
+        inputBytes: result.inputBytes,
+        outputBytes: result.outputBytes,
+      });
+      setUseCurrentColor(false);
+      setViewMode("preview");
+    } catch (e) {
+      showToast(`Error: ${String(e)}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const text = e.clipboardData?.getData("text/plain") ?? "";
+      if (/<svg[\s>]/i.test(text)) {
+        e.preventDefault();
+        handlePasteSvg(text);
+      }
+    };
+    window.addEventListener("paste", handlePaste);
+
+    return () => {
+      window.removeEventListener("paste", handlePaste);
+    };
+  }, [handlePasteSvg]);
 
   const handleDrop = useCallback(async (paths: string[]) => {
     try {
@@ -199,17 +249,30 @@ export function SvgTab() {
 
               <div className="flex gap-1.5">
                 <button
+                  onClick={async () => {
+                    const text = await readText();
+                    if (/<svg[\s>]/i.test(text)) handlePasteSvg(text);
+                    else showToast("No SVG in clipboard");
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all"
+                >
+                  <ClipboardIcon />
+                  Paste
+                </button>
+                <button
                   onClick={handleCopy}
                   className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all"
                 >
                   Copy
                 </button>
-                <button
-                  onClick={handleSave}
-                  className="px-3 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-[13px] rounded-lg font-medium transition-all"
-                >
-                  Save
-                </button>
+                {state?.path && (
+                  <button
+                    onClick={handleSave}
+                    className="px-3 py-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-[13px] rounded-lg font-medium transition-all"
+                  >
+                    Save
+                  </button>
+                )}
                 <button
                   onClick={handleClear}
                   className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-600 hover:text-zinc-400 text-[13px] rounded-lg font-medium transition-all"
@@ -219,7 +282,26 @@ export function SvgTab() {
               </div>
             </div>
           </>
-        ) : undefined}
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center gap-2.5 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30">
+            <div className="text-zinc-600">
+              <UploadIcon />
+            </div>
+            <p className="text-[13px] font-medium text-zinc-500">Drop an SVG file</p>
+            <p className="text-xs text-zinc-700">Optimizes with SVGO</p>
+            <button
+              onClick={async () => {
+                const text = await readText();
+                if (/<svg[\s>]/i.test(text)) handlePasteSvg(text);
+                else showToast("No SVG in clipboard");
+              }}
+              className="mt-1 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-zinc-200 text-[13px] rounded-lg font-medium transition-all"
+            >
+              <ClipboardIcon />
+              Paste SVG <span className="text-zinc-600 font-normal">⌘V</span>
+            </button>
+          </div>
+        )}
       </DropZone>
 
       {toast && (

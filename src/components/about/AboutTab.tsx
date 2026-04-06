@@ -13,6 +13,7 @@ const RUST_LIBS = [
   { name: "webp", version: "0.3.1" },
   { name: "ravif", version: "0.13.0" },
   { name: "serde", version: "1.0.228" },
+  { name: "tauri-plugin-clipboard-manager", version: "2.3.2" },
 ];
 
 function AppLogo() {
@@ -46,7 +47,7 @@ export function AboutTab() {
         Visionary
       </h1>
       <p className="mt-1 text-[13px] text-zinc-500 tabular-nums">
-        Version 0.2.1
+        Version 0.2.2
       </p>
       <p className="mt-1 text-[12px] text-zinc-700">
         Image &amp; SVG tools for web developers
