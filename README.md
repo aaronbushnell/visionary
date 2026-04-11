@@ -12,6 +12,10 @@
 
 ---
 
+> **Disclaimer:** This application is completely vibe-coded — and that's intentional. Visionary serves two purposes: it's a practical tool for compression tasks I find myself reaching for regularly, and an ongoing experiment to see what's possible when building with vibe coding tools like [Claude Code](https://claude.ai/code). Expect rough edges, but also expect it to work.
+
+---
+
 ## What it does
 
 Visionary is a lightweight macOS desktop app for the two most common image chores in web development: compressing raster images and optimizing SVGs. Everything runs locally — no uploads, no accounts, no internet required.

@@ -72,7 +72,7 @@ function ClipboardIcon() {
 
 export function SvgTab() {
   const [state, setState] = useState<SvgState | null>(null);
-  const [useCurrentColor, setUseCurrentColor] = useState(false);
+  const [useCurrentColor, setUseCurrentColor] = useState(true);
   const [viewMode, setViewMode] = useState<ViewMode>("preview");
   const [toast, setToast] = useState<string | null>(null);
   const showToast = (msg: string) => {
@@ -82,7 +82,7 @@ export function SvgTab() {
 
   const handlePasteSvg = useCallback((svgText: string) => {
     try {
-      const result = runSvgo(svgText, false);
+      const result = runSvgo(svgText, true);
       setState({
         path: "",
         original: svgText,
@@ -90,7 +90,7 @@ export function SvgTab() {
         inputBytes: result.inputBytes,
         outputBytes: result.outputBytes,
       });
-      setUseCurrentColor(false);
+      setUseCurrentColor(true);
       setViewMode("preview");
     } catch (e) {
       showToast(`Error: ${String(e)}`);
@@ -116,7 +116,7 @@ export function SvgTab() {
     try {
       const path = paths[0];
       const svgText = await readTextFile(path);
-      const result = runSvgo(svgText, false);
+      const result = runSvgo(svgText, true);
       setState({
         path,
         original: svgText,
@@ -124,7 +124,7 @@ export function SvgTab() {
         inputBytes: result.inputBytes,
         outputBytes: result.outputBytes,
       });
-      setUseCurrentColor(false);
+      setUseCurrentColor(true);
       setViewMode("preview");
     } catch (e) {
       showToast(`Error: ${String(e)}`);
@@ -182,22 +182,25 @@ export function SvgTab() {
             {/* Preview / Code pane */}
             <div
               className="relative flex-1 rounded-xl border border-zinc-800/60 overflow-hidden min-h-0"
-              style={{
-                background: "#0e0e12",
-                backgroundImage:
-                  viewMode === "preview"
-                    ? "radial-gradient(circle, #1c1c26 1px, transparent 1px)"
-                    : "none",
-                backgroundSize: "18px 18px",
-              }}
+              style={
+                viewMode === "preview"
+                  ? {
+                      backgroundColor: "#3a3a46",
+                      backgroundImage:
+                        "linear-gradient(45deg, #25252f 25%, transparent 25%), linear-gradient(-45deg, #25252f 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #25252f 75%), linear-gradient(-45deg, transparent 75%, #25252f 75%)",
+                      backgroundSize: "16px 16px",
+                      backgroundPosition: "0 0, 0 8px, 8px -8px, -8px 0px",
+                    }
+                  : { background: "#0e0e12" }
+              }
             >
               {viewMode === "preview" ? (
                 <div className="w-full h-full flex items-center justify-center p-6 [&_svg]:max-w-full [&_svg]:max-h-full [&_svg]:w-auto [&_svg]:h-auto"
                   dangerouslySetInnerHTML={{ __html: state.optimized }}
                 />
               ) : (
-                <pre className="w-full h-full p-4 overflow-auto text-[12px] leading-relaxed font-mono text-zinc-400 select-text">
-                  {formatXml(state.optimized)}
+                <pre className="w-full h-full p-4 overflow-auto text-[12px] leading-relaxed font-mono text-zinc-400 select-text whitespace-pre-wrap break-all">
+                  {state.optimized.replace(/>\s+</g, "><").trim()}
                 </pre>
               )}
 

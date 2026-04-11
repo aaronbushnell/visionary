@@ -7,7 +7,7 @@ import { AboutTab } from "./components/about/AboutTab";
 import { TabId } from "./types";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabId>("compress");
+  const [activeTab, setActiveTab] = useState<TabId>("svg");
 
   const handleTitlebarMouseDown = (e: React.MouseEvent) => {
     if (!(e.target as HTMLElement).closest("button")) {

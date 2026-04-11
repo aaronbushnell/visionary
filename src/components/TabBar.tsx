@@ -58,8 +58,8 @@ function AboutIcon() {
 }
 
 const TABS: { id: TabId; label: string; Icon: () => JSX.Element }[] = [
-  { id: "compress", label: "Compress", Icon: CompressIcon },
   { id: "svg", label: "SVG", Icon: SvgIcon },
+  { id: "compress", label: "Compress", Icon: CompressIcon },
   { id: "about", label: "About", Icon: AboutIcon },
 ];
 
